@@ -10,13 +10,20 @@ class knn(classifier):
     def __init__(self, k = 3):
         self.k = k
 
-    # get euclidean distance
-    def getDistance(self, instance1, instance2):
-        pairs = zip(instance1, instance2)
-        diffsSquared = 0
-        for x1, x2 in pairs:
-            diffsSquared += pow((x1 - x2), 2)
-        return math.sqrt(diffsSquared)
+    def fit(self, X, Y):
+        # noop
+        pass
+
+    def predict(self, testX, train, test):
+        predictions = []
+        for x in range(len(testX)):
+            neighbors = self.getNeighbors(train, test[x][0])
+            majority = self.getMajorityClass(neighbors)
+            predictions.append(majority)
+            # print('predicted label = ' + str(majority) + ', actual label = ' + str(test[x][1]))
+        accuracy = self.get_accuracy(test, predictions)
+#         print('Accuracy is: ' + str(accuracy))
+        return str(accuracy)
 
     # get neighbors according to its distance
     def getNeighbors(self, trainingSet, testData):
@@ -30,7 +37,15 @@ class knn(classifier):
         # pick up top k elements
         kNeighbors = sortedTraindata[:self.k]
         return kNeighbors
-    
+
+    # get euclidean distance
+    def getDistance(self, instance1, instance2):
+        pairs = zip(instance1, instance2)
+        diffsSquared = 0
+        for x1, x2 in pairs:
+            diffsSquared += pow((x1 - x2), 2)
+        return math.sqrt(diffsSquared)
+
     # calculate out the class of neighbors and decide the class by the frequency
     def getMajorityClass(self, neighbors):
         classVotes = {}
@@ -50,20 +65,7 @@ class knn(classifier):
                 correct += 1
         return (correct / float(len(test_set)))
 
-    def fit(self, X, Y):
-        # noop
-        pass
-    
-    def predict(self, testX, train, test):
-        predictions = []
-        for x in range(len(testX)):
-            neighbors = self.getNeighbors(train, test[x][0])
-            majority = self.getMajorityClass(neighbors)
-            predictions.append(majority)
-            # print('predicted label = ' + str(majority) + ', actual label = ' + str(test[x][1]))
-        accuracy = self.get_accuracy(test, predictions)
-#         print('Accuracy is: ' + str(accuracy))
-        return str(accuracy)
+
 
 from scipy.io import arff
 import pandas as pd
@@ -97,6 +99,6 @@ test = list(zip(testX, testY))
 
 print('K\tAccuracy')
 for k in range(2, 33):
-    my_knn = knn(k)
-    accuracy = my_knn.predict(testX,train,test)
+    knnInstance = knn(k)
+    accuracy = knnInstance.predict(testX,train,test)
     print(str(k) + '\t' + accuracy)
