@@ -20,7 +20,7 @@ class knn(classifier):
             neighbors = self.getNeighbors(train, test[x][0])
             majority = self.getMajorityClass(neighbors)
             predictions.append(majority)
-            # print('predicted label = ' + str(majority) + ', actual label = ' + str(test[x][1]))
+            # print('predicted value = ' + str(majority) + ', actual value = ' + str(test[x][1]))
         accuracy = self.get_accuracy(test, predictions)
 #         print('Accuracy is: ' + str(accuracy))
         return str(accuracy)
